@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title> AJAX Demo</title>
+</head>
+<body>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/1.0.0/handlebars.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.1.0.js"></script>
+<script type = "template/handlebars" id = "song-list-template">
+
+   {{favoriteSongs.firstName}}
+   {{favoriteSongs.lastName}}
+   {{#if this.isAdmin}}
+      <p> Admin </p>
+    {{else}}
+      <p> Not Admin </p>
+	{{/if}}
+    <ul>
+    {{#each favoriteSongs.openSourceProjects}}
+
+			<li>{{this.name}} </li>
+	{{else}}
+		<li> noSongsFound </li>
+	{{/each}}
+    </ul>
+</script>
+<script type="text/javascript">
+	function getSongs(){
+	var promise =  $.ajax({
+	url: 'http://itp-api.herokuapp.com/api/v1/me',
+	type: 'get'
+	});
+	var promise2 = promise.then(function(response){
+		return response.data;
+	});
+	return promise2;
+}
+//get songs returns a promise
+//all promises have a .then attribute
+getSongs().then(function(response){
+	console.log(2, response);
+	var templateSource = $('#song-list-template').html();
+	var template = Handlebars.compile(templateSource);
+	var html = template({
+		favoriteSongs: response
+	});
+	$('#song-list').html(html);
+}, function(){
+	console.log('there was an error');
+});
+
+	
+</script>
+
+<div id="song-list"></div>
+  <script src="jquery-3.1.1.js"></script>
+  <script src="handlebars-v4.0.5.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
+
+
+/* JS
+function getSongs(){
+	var promise =  $.ajax({
+	url: 'http://itp-api.herokuapp.com/api/v1/me',
+	type: 'get'
+	});
+	var promise2 = promise.then(function(response){
+		return response.data;
+	});
+	return promise2;
+}
+//get songs returns a promise
+//all promises have a .then attribute
+getSongs().then(function(response){
+	console.log(2, response);
+	var templateSource = $('#song-list-template').html();
+	var template = Handlebars.compile(templateSource);
+	var html = template({
+		favoriteSongs: response
+	});
+	$('#song-list').html(html);
+}, function(){
+	console.log('there was an error');
+});
+
